@@ -1,4 +1,7 @@
 $(function(){
+  // check box checker
+
+
   // button click event
   $('#google-vis').click(function(){
     // get file
@@ -10,7 +13,8 @@ $(function(){
       return function(e) {
         // api request
         var request_data = {
-          'jpg': e.target.result
+          'image': e.target.result,
+          'checks': []
         };
 
         // ajax request

@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <title>Google Vision API sample</title>
   <script src="https://code.jquery.com/jquery-3.1.0.min.js"></script>
-  <script src="/static/js/sample.js"></script>
+  <script src="/static/js/index.js"></script>
 </head>
 <body>
   <div>sample api request</div>
@@ -12,5 +12,18 @@
     <input type="file" id='upload-file' />
     <button type="button" id="google-vis">api request</button>
   </div>
+
+  <ul style="list-style: none;">
+    {% for item in items %}
+    <li>
+      <labeL>
+        {{ item }}
+        <input id="{{ item }}" type="checkbox" name="{{ item }}" value="{{ item }}" />
+      </label>
+    </li>
+    {% endfor %}
+  </ul>
+
+  
 </body>
 </html>

@@ -4,9 +4,24 @@ import urllib
 import base64
 import json
 import requests
+from PIL import Image
+from PIL import ImageDraw
 
 # set flask application
 app = Flask(__name__)
+
+
+# define key type
+analysis_list = [
+    'TYPE_UNSPECIFIED',
+    'FACE_DETECTION',
+    'LANDMARK_DETECTION',
+    'LOGO_DETECTION',
+    'LABEL_DETECTION',
+    'TEXT_DETECTION',
+    'SAFE_SEARCH_DETECTION',
+    'IMAGE_PROPERTIES'
+]
 
 
 # read api key
@@ -31,7 +46,7 @@ def google_cloud_vision(image_content):
                 'content': image_content
             },
             'features': [{
-                'type': 'LABEL_DETECTION',
+                'type': 'FACE_DETECTION',
                 'maxResults': 10,
             }]
         }]
@@ -47,7 +62,7 @@ def google_cloud_vision(image_content):
 # routing
 @app.route('/')
 def hello():
-    return render_template('sample.html')
+    return render_template('index.html', items=analysis_list)
 
 
 @app.route('/api/classify', methods=['POST'])
@@ -55,18 +70,21 @@ def classify():
     # get request parameter
     request_json = request.json
 
-    if ('jpg' in request_json):
+    # set image list container
+    results = []
+
+    if request.method == 'POST' and ('image' in request_json):
         # convert request data
-        image_content = request_json['jpg'].replace('data:image/jpeg;base64,', '')
+        image_content = request_json['image'].replace('data:image/jpeg;base64,', '')
 
         # api request
         response = google_cloud_vision(image_content)
 
-        # api response
-        return jsonify(response)
+        # create response data
+        results = jsonify(response)
 
-    return 'Bad request!'
-
+    # return render template
+    return results
 
 # run main function
 if __name__ == '__main__':
