@@ -2,21 +2,31 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Google Vision API sample</title>
-  <script src="https://code.jquery.com/jquery-3.1.0.min.js"></script>
-  <script src="/static/js/index.js"></script>
+  <title>Google Vision API Sample</title>
+  <!--<script src="https://code.jquery.com/jquery-3.1.0.min.js"></script>-->
+  <!--<script src="/static/js/index.js"></script>-->
 </head>
 <body>
-  <div>sample api request</div>
+  <!--<div>sample api request</div>
   <div>
     <input type="file" id='upload-file' />
     <button type="button" id="google-vis">api request</button>
+  </div>-->
+  <header>
+    <h1>Google Vision API Sample</h1>
+  </header>
+
+  <div>
+    <form action="/" method="POST" enctype="multipart/form-data">
+      <input type="file" name="image" accept="image/*" required /> <br/>
+      <input type="submit" value="Send" />
+    </form>
   </div>
 
   <ul style="list-style: none;">
     {% for item in items %}
     <li>
-      <labeL>
+      <label>
         {{ item }}
         <input id="{{ item }}" type="checkbox" name="{{ item }}" value="{{ item }}" />
       </label>
@@ -24,6 +34,9 @@
     {% endfor %}
   </ul>
 
+  <footer>
+    <p>Created by wararaki.</p>
+  </footer>
   
 </body>
 </html>

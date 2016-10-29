@@ -61,30 +61,48 @@ def google_cloud_vision(image_content):
 
 # routing
 @app.route('/')
-def hello():
-    return render_template('index.html', items=analysis_list)
+def index():
+    # validate request method type
+    if request.method == "GET":
+        # rendering index page
+        return render_template('index.html', items=analysis_list)
+    else: # method == "POST"
+        # get image file from form
+        image_data = request.files['image']
+
+        # convert binary to base64 data
+        image_base64 = base64.b64encode(data,getValue())
+
+        # call google vision api
+        response_data = google_cloud_vision(image_base64)
+
+        # output result page
+        if res["responses"][0]:
+            return render_template("result.html")
+        else:
+            return render_template("result.html")
 
 
-@app.route('/api/classify', methods=['POST'])
-def classify():
-    # get request parameter
-    request_json = request.json
+# @app.route('/api/classify', methods=['POST'])
+# def classify():
+#     # get request parameter
+#     request_json = request.json
 
-    # set image list container
-    results = []
+#     # set image list container
+#     results = []
 
-    if request.method == 'POST' and ('image' in request_json):
-        # convert request data
-        image_content = request_json['image'].replace('data:image/jpeg;base64,', '')
+#     if request.method == 'POST' and ('image' in request_json):
+#         # convert request data
+#         image_content = request_json['image'].replace('data:image/jpeg;base64,', '')
 
-        # api request
-        response = google_cloud_vision(image_content)
+#         # api request
+#         response = google_cloud_vision(image_content)
 
-        # create response data
-        results = jsonify(response)
+#         # create response data
+#         results = jsonify(response)
 
-    # return render template
-    return results
+#     # return render template
+#     return results
 
 # run main function
 if __name__ == '__main__':
