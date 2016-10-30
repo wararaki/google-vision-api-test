@@ -1,11 +1,10 @@
 # import libraries
-from flask import Flask, request, jsonify, render_template
-import urllib
 import base64
 import json
+
 import requests
-from PIL import Image
-from PIL import ImageDraw
+from flask import Flask, render_template, request
+from PIL import Image, ImageDraw
 
 # set flask application
 app = Flask(__name__)
@@ -47,7 +46,7 @@ def google_cloud_vision(image_content):
             },
             'features': [{
                 'type': 'FACE_DETECTION',
-                'maxResults': 10,
+                'maxResults': 10
             }]
         }]
     })
@@ -60,7 +59,7 @@ def google_cloud_vision(image_content):
 
 
 # routing
-@app.route('/')
+@app.route('/', methods=['GET', 'POST'])
 def index():
     # validate request method type
     if request.method == "GET":
@@ -71,16 +70,16 @@ def index():
         image_data = request.files['image']
 
         # convert binary to base64 data
-        image_base64 = base64.b64encode(data,getValue())
+        image_base64 = base64.b64encode(image_data.read()).decode("utf-8")
 
         # call google vision api
         response_data = google_cloud_vision(image_base64)
 
         # output result page
-        if res["responses"][0]:
-            return render_template("result.html")
+        if response_data["responses"][0]:
+            return render_template("result.html", response="success")
         else:
-            return render_template("result.html")
+            return render_template("result.html", error="error message")
 
 
 # @app.route('/api/classify', methods=['POST'])
