@@ -1,10 +1,12 @@
-# import libraries
+'''
+Google Vision API Test Application
+'''
 import base64
 import json
 
 import requests
 from flask import Flask, render_template, request
-from PIL import Image, ImageDraw
+#from PIL import Image, ImageDraw
 
 # set flask application
 app = Flask(__name__)
@@ -34,9 +36,18 @@ API_URL = 'https://vision.googleapis.com/v1/images:annotate?key='
 
 
 # google api request function
-def google_cloud_vision(image_content):
+def google_cloud_vision(image_content, check_option_list):
+    '''
+    Google Vision API request module
+    '''
     # set request url
     api_url = API_URL + API_KEY
+
+    # create request features type
+    features = []
+    for check_option in check_option_list:
+        print("{0}".format(check_option))
+        features.append({'type': check_option, 'maxResults': 10})
 
     # set request parameter
     req_body = json.dumps({
@@ -44,10 +55,7 @@ def google_cloud_vision(image_content):
             'image': {
                 'content': image_content
             },
-            'features': [{
-                'type': 'FACE_DETECTION',
-                'maxResults': 10
-            }]
+            'features': features
         }]
     })
 
@@ -61,47 +69,41 @@ def google_cloud_vision(image_content):
 # routing
 @app.route('/', methods=['GET', 'POST'])
 def index():
+    '''
+    index module
+    '''
+
     # validate request method type
+    # [GET] method event
     if request.method == "GET":
         # rendering index page
         return render_template('index.html', items=analysis_list)
-    else: # method == "POST"
+
+    # [POST] method event
+    else:
         # get image file from form
         image_data = request.files['image']
 
-        # convert binary to base64 data
+        # get checked option list
+        check_option_list = request.form.getlist('options')
+
+        # To Do: change javascript checker
+        if len(check_option_list) == 0:
+            return render_template("result.html", error="error not check items")
+
+        # convert binary to base64(utf-8) data
         image_base64 = base64.b64encode(image_data.read()).decode("utf-8")
 
         # call google vision api
-        response_data = google_cloud_vision(image_base64)
+        response_data = google_cloud_vision(image_base64, check_option_list)
+
+        print(response_data)
 
         # output result page
-        if response_data["responses"][0]:
-            return render_template("result.html", response="success")
-        else:
-            return render_template("result.html", error="error message")
-
-
-# @app.route('/api/classify', methods=['POST'])
-# def classify():
-#     # get request parameter
-#     request_json = request.json
-
-#     # set image list container
-#     results = []
-
-#     if request.method == 'POST' and ('image' in request_json):
-#         # convert request data
-#         image_content = request_json['image'].replace('data:image/jpeg;base64,', '')
-
-#         # api request
-#         response = google_cloud_vision(image_content)
-
-#         # create response data
-#         results = jsonify(response)
-
-#     # return render template
-#     return results
+        #if response_data["responses"][0]:
+        return render_template("result.html", response="success")
+        #else:
+            #return render_template("result.html", error="error message")
 
 # run main function
 if __name__ == '__main__':
